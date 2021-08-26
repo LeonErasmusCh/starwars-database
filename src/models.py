@@ -8,23 +8,49 @@ from eralchemy import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
+class People(Base):
+    __tablename__ = 'people'
+    # Here we define columns for the table address.
     # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    uid = Column(Integer, primary_key=True)
+    name = Column(String(50), nullable=False)
+    height = Column(Integer)
+    mass = Column(Integer)
+    gender = Column(String(250))
+    homeworld =  Column(Integer, ForeignKey('planet.name'))  
 
-class Address(Base):
-    __tablename__ = 'address'
+class Planet(Base):
+    __tablename__ = 'planet'
     # Here we define columns for the table address.
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    name = Column(String(50), nullable=False)
+    diameter = Column(Integer)
+    population = Column(Integer)
+    climate = Column(String(100))
+    relationPerson = relationship("Person")
+
+class Vehicle(Base):
+    __tablename__ = 'vehicle'
+    pilot_uid = Column(Integer, primary_key=True)
+    name = Column(String(80), ForeignKey('people.name'), nullable=False)
+    relationVehicle = relationship("People")
+
+class Favourites(Base):
+    __tablename__ = 'favourites'
+    id = Column(Integer, primary_key=True)
+    people = Column(String(50), ForeignKey('people.name'))
+    planet = Column(String(50),ForeignKey('planet.name'))
+    vehicle = Column(String(50),ForeignKey('vehicle.name'))
+
+class User(Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True)
+    user_name = Column(String(50),ForeignKey('favourites'))
+    password = Column(String(50))
+    relationUser = relationship("Favourites")
+
+   
 
     def to_dict(self):
         return {}
